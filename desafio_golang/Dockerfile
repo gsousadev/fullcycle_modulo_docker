@@ -1,15 +1,17 @@
-FROM golang:latest AS builder
+FROM golang:alpine AS builder
 
-WORKDIR /go/src
+RUN apk update
 
-RUN mkdir fullcycle_rocks \ 
-    && cd fullcycle_rocks \
-    && go mod init gsousadev/fullcycle_rocks
+WORKDIR $GOPATH/src/fullcycle_rocks
 
-COPY fullcycle_rocks/fullcyle_rocks.go /go/src/fullcycle_rocks/
+RUN go mod init
 
-ENTRYPOINT ["go", "run", "./fullcycle_rocks/fullcycle_rocks.go"]
+COPY . .
 
-#FROM golang:1.18rc1-alpine3.15 
-#WORKDIR ~
-#COPY --from="builder" /var/www/golang 
+RUN go build -o /go/bin/fullcycle_rocks
+
+FROM scratch
+
+COPY --from=builder /go/bin/fullcycle_rocks /go/bin/fullcycle_rocks
+
+ENTRYPOINT ["/go/bin/fullcycle_rocks"]
