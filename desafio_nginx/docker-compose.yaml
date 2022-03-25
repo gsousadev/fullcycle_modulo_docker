@@ -8,8 +8,6 @@ services:
     entrypoint: dockerize -wait tcp://db:3306 -timeout 20s docker-entrypoint.sh node index
     networks:
       - node_network
-    volumes:
-      - ./node:/usr/src/app
     tty: true
     depends_on:
       - db
